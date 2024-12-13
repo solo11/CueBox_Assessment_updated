@@ -64,7 +64,7 @@ The webapp will open in `http://localhost:8501/`
 `CB Created At` date is included rest of the rows are excluded
 
 #### Questions:
-
+ - Can the Patron ID column be used as unique id as it's unique across the table.
  - Assumptions: Are all the assumptions correct, or do any need to be adjusted?
  - Email File Handling: The email file has multiple entries for a given Patron ID. How should this be handled, and what is its significance? Is the email file solely used to validate primary email values?
  - Salutation Standardization: How strict can the salutation be -  Ex: `Mrs Mr Mr. and Mrs.` here clearly the data is valid and correct except for a few variations.
