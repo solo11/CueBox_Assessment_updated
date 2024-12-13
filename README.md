@@ -1,7 +1,4 @@
-# CueBox_Assessment
-
-
-## Cuebox assessment 
+# CueBox Assessment
 
 Input csv files taken from: [google sheets file](https://docs.google.com/spreadsheets/d/1JO-oZ64DNJUQdsZwa0pwVNM29m0_-7fp8kb7wFG1jas/edit?gid=1098870409#gid=1098870409)
 
@@ -25,16 +22,15 @@ The program will generate the output files in the `/output` folder
 
     
    #### Naming conventions for the input files:
-   `Input_Constituents.csv` - constituents fIle
-  `Input_Donation_History.csv` - donation history fIle
-`Input_Emails.csv` - emails fIle
+  - `Input_Constituents.csv` - constituents fIle
+ - `Input_Donation_History.csv` - donation history fIle
+- `Input_Emails.csv` - emails fIle
+#### Naming conventions for the output files:
+-   `CueBox Constituents.csv` - constituents fIle
+ - `CueBox Tags.csv` - tags count fIle
+- `CueBox excluded.csv` - filtered/excluded rows fIle
 
-   #### Naming conventions for the output files:
-   `CueBox Constituents.csv` - constituents fIle
-  `CueBox Tags.csv` - tags count fIle
-`CueBox excluded.csv` - filtered/excluded rows fIle
-
-#### Web App
+#### Web App:
 The web app is also hosted at: https://cuebox.streamlit.app/
 
 To run the web app locally use the following command
