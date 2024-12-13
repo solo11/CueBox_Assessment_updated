@@ -63,15 +63,24 @@ The webapp will open in `http://localhost:8501/`
 
 #### Questions:
 
- - Are all the assumptions correct, does anything needs to be changed
- - The email file has multiple entires for a given patron id, does it needs to be handled, and what is the significance/importance of the email file - is it only used the validate the primary email value?
- - How strict can the salutation be -  Ex: Mrs Mr Mr. and Mrs. here clearly the data is valid and correct except for a few variations.
- - The tags are repeating, should it be handled?
- - Does both the output tables use the same source/filtering conditions
- -  How do you determine type person or company?
+ - Assumptions: Are all the assumptions correct, or do any need to be adjusted?
+ - Email File Handling: The email file has multiple entries for a given Patron ID. How should this be handled, and what is its significance? Is the email file solely used to validate primary email values?
+ - Salutation Standardization: How strict can the salutation be -  Ex: `Mrs Mr Mr. and Mrs.` here clearly the data is valid and correct except for a few variations.
+ - Repeating Tags: Should repeating tags in the tags file be handled, and if so, how?
+ - Output Filtering: Do both output tables `CueBox Constituents.csv and CueBox Tags.csv` use the same source data and filtering conditions?
+- Type Determination: How should the Type column `Person or Company` be determined consistently?
 
 General questions for example:
 - How often is the data updated? 
 - What are the downstream applications
+
+#### Use of AI tools:
+AI tools have been used to support repetative tasks, it has been in two places in this project - to generate case statement conditions for Salutation column and for Date column standardisation 
+
+#### Use of AI Tools:
+AI tools have been used to support repetitive tasks in this project. Specifically, they were applied in two areas:
+Generating case statement conditions for standardizing the `Salutation` column and `Date` column
+
+  
 
 
