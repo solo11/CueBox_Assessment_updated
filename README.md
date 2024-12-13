@@ -31,11 +31,11 @@ The program will generate the output files in the `/output` folder
  - `CueBox Tags.csv` - tags count fIle
 - `CueBox excluded.csv` - filtered/excluded rows fIle
 
+#### Validation:
+The program also generates an excluded rows file  `CueBox excluded.csv`, which included all the rows that were filtered out at every stage of the process. This is used to validate the output generated.
+
 #### Web App:
 The web app is also hosted at: https://cuebox.streamlit.app/
-
-
-Assusumptions
 
 To run the web app locally use the following command
 `python -m streamlit run App/app.py `
@@ -44,6 +44,7 @@ The webapp will open in `http://localhost:8501/`
 
 ### Assumptions and Decisions made:
 
+- ID Column: The `Patron ID` is unique, and instead of generating a new ID column, the `Patron ID` is used. This approach also helps in maintaining standardized data ID across the system.
  - Gender column: the gender columns is misrepresented, corrected it to Martial status based on the data in the column
  - Assuming that if the primary email of a row is not present in the email file, then the row should be excluded 
  - The data for the output columns primary email 1 and primary email 2 comes from the constituent data file and not the email data file
