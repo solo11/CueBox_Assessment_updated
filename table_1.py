@@ -92,7 +92,8 @@ a."CB Created At",
 a."CB Email 1 (Standardized)",
 a."CB Email 2 (Standardized)",
 a."CB Title",
-list(b.mapped_name) as "CB Tags"
+list(b.mapped_name) as "CB Tags",
+a."CB Background Information"
 FROM tags_updated_a a 
  LEFT JOIN tags_api b ON b."name" = a.tag
 GROUP by ALL),
