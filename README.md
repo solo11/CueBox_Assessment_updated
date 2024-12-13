@@ -50,7 +50,8 @@ The webapp will open in `http://localhost:8501/`
 - The company names a not typical for some rows and, those rows have been excluded
 - The patron id 1288 has two entries in the constituent file; the record with the latest 'entered date' is included
 - The Salutation specifies one of "Mr.", "Mrs.", "Ms.", "Dr.", or empty string - based on that the rows having the values as ‘Mr. and Mrs’ -have been inserted as empty string.
-- Determining the type person/company: The rows having a value in the company column are categorised as company and the rows without them are categorised as person. 
+- Determining the type person/company: The rows having a value in the company column are categorised as company and the rows without them are categorised as person.
+- For background informantion column - some values for marital status are `unknown` or `NULL` , I've not made any changes to these values and let them flow.
  
  Exclusion criteria - The rows satisfying these conditions were excluded:
  
@@ -69,6 +70,7 @@ The webapp will open in `http://localhost:8501/`
  - Repeating Tags: Should repeating tags in the tags file be handled, and if so, how?
  - Output Filtering: Do both output tables `CueBox Constituents.csv and CueBox Tags.csv` use the same source data and filtering conditions?
 - Type Determination: How should the Type column `Person or Company` be determined consistently?
+- How to handle `unknown and null` values in marital status
 
 General questions for example:
 - How often is the data updated? 
