@@ -190,7 +190,7 @@ if(uploaded_file_constituests and uploaded_file_Donation_History and uploaded_fi
 
     data_line = duckdb.query(""" with total_donation_calc as (select '$' || cast(sum(CAST(REPLACE(REPLACE("Donation Amount", '$', ''), ',', '') AS INT)) as string) || '.00' as 'CB Lifetime Donation Amount', "Patron ID" 
     from donation_history where Status = 'Paid' GROUP BY "Patron ID") 
-                             select "Patron ID" as ID, "CB Lifetime Donation Amount" as "Total amount" from total_donation_calc order by "CB Lifetime Donation Amount" desc limit 10 """).to_df()
+                             select "Patron ID" as ID, CAST(REPLACE(REPLACE("CB Lifetime Donation Amount", '$', ''), ',', '') AS INT) as "Total amount" from total_donation_calc order by CAST(REPLACE(REPLACE("CB Lifetime Donation Amount", '$', ''), ',', '') AS INT) desc limit 10""").to_df()
     
     excluded_rows_result = duckdb.query(excluded_rows_query).to_df()
 
@@ -199,8 +199,14 @@ if(uploaded_file_constituests and uploaded_file_Donation_History and uploaded_fi
 
     st.write(excluded_rows_result)
 
-    st.divider()
-    st.subheader("Top total donations")
-    st.bar_chart(data=data_line,x="ID", y="Total amount",use_container_width=True)
+    sorted_df = data_line.sort_values(by='Total amount', ascending=True) 
 
-    # st.write(data_line)
+    chart = alt.Chart(sorted_df).mark_bar().encode(
+    x=alt.X('ID:O',scale=alt.Scale(paddingInner=0.5),sort='-y'),
+    y=alt.Y('Total amount',axis=alt.Axis(title='Total Amount')),
+    tooltip=['ID', 'Total amount'])
+    
+    st.divider()
+    st.subheader("Top 10 total donations")
+
+    st.altair_chart(chart,use_container_width=True)
