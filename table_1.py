@@ -7,80 +7,14 @@ import duckdb
 # Adding "CB Background Information" Column
 # Filters the rows where "Date Entered" column is null
 
-   
-  #  insert the querys
-
-
-query_4 = """
-create or replace table intermediate_types as  (SELECT 
-"CB Constituent Type",
-"CB Created At",
-"CB Title",
-"CB Background Information",
-"CB Company Name",
-"Patron ID",
-"First Name",
-"Last Name",
-"Date Entered",
-"Primary Email",
-"Company",
-"Salutation",
-"Title",
-"Tags",
-"Gender" from donation_constituents_v1 where latest_insert = 1
-  and "CB Constituent Type" != ''
-  union 
-select
-'Company' as "CB Constituent Type",
-"CB Created At",
-"CB Title",
-"CB Background Information",
-"CB Company Name",
-concat(cast("Patron ID" as string),'new') as "Patron ID",
-null as "First Name",
-null as "Last Name",
-"Date Entered",
-"Primary Email",
-"Company",
-"Salutation",
-"Title",
-"Tags",
-"Gender" from donation_constituents_v1 where  latest_insert = 1 and
-"CB Company Name" is not null and  "CB Company Name" not in ( '...' , 'None','N/A','Retired','' )
-  and 
-  ("First Name" is not null and "Last Name" is not null)
-
-  union (
-  select 
-'Company' as "CB Constituent Type",
-"CB Created At",
-"CB Title",
-"CB Background Information",
-"CB Company Name",
-"Patron ID",
-null as "First Name",
-null as "Last Name",
-"Date Entered",
-"Primary Email",
-"Company",
-"Salutation",
-"Title",
-"Tags",
-"Gender" from donation_constituents_v1 where  latest_insert = 1 and
-("CB Company Name" is not null) and  "CB Company Name" not in ( '...' , 'None','N/A','Retired','' )
-and
-  ("First Name" is null and "Last Name" is null)))
-"""
-
-query_1 = """create or replace table donation_constituents_v1 as 
+query_1 = """
+create or replace view donation_constituents_v1 as 
   (
     select row_number() over (partition by "Patron ID" order by "Date Entered" desc) as latest_insert,
     case when Company is NULL or Company = '...' or Company = 'None' or Company = 'N/A' or Company = 'Retired' 
     then 'Person'
     ELSE 'Company'
     END AS "CB Constituent Type", 
-    
-  
     STRFTIME(
         CASE
             WHEN "Date Entered" LIKE '% %,%' THEN STRPTIME("Date Entered", '%b %d, %Y')
@@ -128,10 +62,9 @@ with final_table as (select "Patron ID" as 'CB Constituent ID', "CB Constituent 
   "CB Title",
   "CB Background Information",
   tags
-from intermediate_types where "CB Constituent Type" = 'Person' and "First Name" is not null and "Last Name" is not null
-
+from donation_constituents_v1 where latest_insert = 1
+and "CB Constituent Type" = 'Person' and "First Name" is not null and "Last Name" is not null
 UNION 
-
 select "Patron ID" as 'CB Constituent ID', "CB Constituent Type" ,
 "First Name" as 'CB First Name' ,
   "Last Name" as 'CB Last Name',
@@ -142,10 +75,9 @@ select "Patron ID" as 'CB Constituent ID', "CB Constituent Type" ,
   "CB Title",
   "CB Background Information",
   tags
-from intermediate_types where  "CB Constituent Type" = 'Company' and Company is not null),
-
+from donation_constituents_v1 where latest_insert = 1
+and "CB Constituent Type" = 'Company' and Company is not null),
 tags_updated as (with tags_updated_a as (select *, trim(UNNEST(STRING_SPLIT(ifnull(tags,''), ','))) as tag from final_table)
-
 SELECT DISTINCT 
 a."CB Constituent ID",
 a."CB Constituent Type",
@@ -156,37 +88,28 @@ a."CB Created At",
 a."CB Email 1 (Standardized)",
 a."CB Email 2 (Standardized)",
 a."CB Title",
-list(b.mapped_name) as "CB Tags",
-a."CB Background Information"
+list(b.mapped_name) as "CB Tags"
 FROM tags_updated_a a 
  LEFT JOIN tags_api b ON b."name" = a.tag
 GROUP by ALL),
-
 total_donation_calc as (select '$' || cast(sum(CAST(REPLACE(REPLACE("Donation Amount", '$', ''), ',', '') AS INT)) as string) || '.00' as 'CB Lifetime Donation Amount', "Patron ID" 
   from donation_history where Status = 'Paid' GROUP BY "Patron ID"),
-
 latest_donation as (with latest_donation_a as (select "Patron ID", "Donation Date",
   row_number() OVER (PARTITION BY "Patron ID" ORDER BY "Donation Date" desc) as rn
   from donation_history where Status = 'Paid')
 select * from latest_donation_a where rn = 1)
-
 select a.*, b."CB Lifetime Donation Amount", c."Donation Date" as 'CB Most Recent Donation Date'
   from tags_updated a 
-  left join total_donation_calc b on cast(replace(a."CB Constituent ID",'new','') as int) = b."Patron ID"
-  left join latest_donation c on cast(replace(a."CB Constituent ID",'new','') as int) = c."Patron ID")
+  left join total_donation_calc b on a."CB Constituent ID" = b."Patron ID"
+  left join latest_donation c on a."CB Constituent ID" = c."Patron ID")
 """
-
 
 def execute_cb_constituents():
   duckdb.connect('databases.db')
 
   duckdb.query(query_1)
-  duckdb.query(query_4)
   duckdb.query(query_2)
   duckdb.query(query_3)
 
-
-
   duckdb.sql("select * from CueBox_Constituents").show()
   duckdb.query("""COPY "CueBox_Constituents" TO 'output/CueBox Constituents.csv' (HEADER, DELIMITER ',')""")
-  print("CueBox Constituents file exported successfully")
