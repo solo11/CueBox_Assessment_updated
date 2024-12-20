@@ -1,3 +1,4 @@
+Update: The rows qualifying for both type person and type company are spilt into two different rows - the newly split row will have the keyword `new` appended at the end to the `Constituent ID` column.
 
 # CueBox Assessment
 
